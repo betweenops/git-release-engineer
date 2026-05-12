@@ -5,7 +5,7 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "gitlab-ai-release-engineer"
 version = "0.1.0"
-description = "CLI scaffolding for release analysis against EdgeOps release definitions."
+description = "CLI scaffolding for release analysis against manifest-driven release definitions."
 requires-python = ">=3.11"
 
 [tool.setuptools]

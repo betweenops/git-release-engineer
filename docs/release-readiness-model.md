@@ -6,7 +6,7 @@ The purpose of the model is to produce a structured, explainable release assessm
 
 ## Unit Of Analysis
 
-For EdgeOps, the initial unit of analysis should be the `edge-release` manifest plus the GitLab release epic and staged issues it creates.
+The initial unit of analysis should be the release manifest plus the GitLab release epic and staged issues it creates.
 
 Why this is stronger than milestone-first:
 
@@ -82,7 +82,7 @@ These are deterministic first-pass rules, not final policy.
 
 - Reward successful staging or pre-production deployments where available.
 - Penalize missing verification evidence for high-risk releases.
-- Penalize missing validation results for required EdgeOps targets such as connected and airgap flows.
+- Penalize missing validation results for required validation targets such as connected and airgap flows.
 
 ## Blocker Criteria
 
@@ -131,7 +131,7 @@ That keeps the product auditable and reduces the risk of persuasive but weak out
 ## Next Implementation Targets
 
 1. Define the GitLab fields needed to analyze the release epic, stage issues, and child tasks.
-2. Parse and normalize `edge-release` manifest fields into internal release scope objects.
+2. Parse and normalize manifest fields into internal release scope objects.
 3. Map GitLab labels and states into normalized internal categories.
 4. Build the first deterministic readiness report generator.
 5. Layer LLM summarization on top of the generated report.

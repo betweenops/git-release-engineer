@@ -49,20 +49,20 @@ def load_env_file(path: Path) -> None:
 
 
 def default_manifest_path() -> Path | None:
-    manifest = os.environ.get("EDGE_RELEASE_MANIFEST", "").strip()
+    manifest = os.environ.get("RELEASE_MANIFEST_PATH", "").strip()
     if manifest:
         return Path(manifest)
-    root = os.environ.get("EDGE_RELEASE_ROOT", "").strip()
+    root = os.environ.get("RELEASE_DEFINITION_ROOT", "").strip()
     if root:
         return Path(root) / "release.yaml"
     return None
 
 
 def default_vars_file_path() -> Path | None:
-    vars_file = os.environ.get("EDGE_RELEASE_VARS_FILE", "").strip()
+    vars_file = os.environ.get("RELEASE_VARS_FILE", "").strip()
     if vars_file:
         return Path(vars_file)
-    root = os.environ.get("EDGE_RELEASE_ROOT", "").strip()
+    root = os.environ.get("RELEASE_DEFINITION_ROOT", "").strip()
     if root:
         return Path(root) / "release.vars.env"
     return None
@@ -75,7 +75,7 @@ def resolve_manifest_path(path: Path | None) -> Path:
     if env_path is not None:
         return env_path
     raise ManifestError(
-        "Manifest path not provided. Set EDGE_RELEASE_MANIFEST or EDGE_RELEASE_ROOT, "
+        "Manifest path not provided. Set RELEASE_MANIFEST_PATH or RELEASE_DEFINITION_ROOT, "
         "or pass the manifest path explicitly."
     )
 
@@ -83,7 +83,7 @@ def resolve_manifest_path(path: Path | None) -> Path:
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(
         prog="gitlab-ai-release-engineer",
-        description="Inspect EdgeOps release definitions and generate deterministic reports.",
+        description="Inspect manifest-driven release definitions and generate deterministic reports.",
     )
     subparsers = parser.add_subparsers(dest="command", required=True)
 

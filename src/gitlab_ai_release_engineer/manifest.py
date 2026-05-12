@@ -33,7 +33,7 @@ def parse_scalar(value: str) -> Any:
 
 
 class SimpleYamlParser:
-    """A minimal YAML parser for the EdgeOps manifest shape."""
+    """A minimal YAML parser for the manifest shape used by this project."""
 
     def __init__(self, text: str) -> None:
         self.lines = text.splitlines()

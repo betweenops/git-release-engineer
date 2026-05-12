@@ -18,11 +18,11 @@ This project aims to centralize that context and answer practical questions such
 
 ## Product Direction
 
-This project is being designed first around the EdgeOps release process.
+This project is being designed around manifest-driven release workflows.
 
-The current release-definition source lives in the external repository:
+The current release-definition source lives in an external repository:
 
-- `EDGE_RELEASE_ROOT`
+- `RELEASE_DEFINITION_ROOT`
 
 That repository already defines:
 
@@ -37,7 +37,7 @@ This repository should not replace that definition layer in v1. It should consum
 Initial focus:
 
 - GitLab-first workflow support
-- EdgeOps release visibility built from the existing `edge-release` manifest and GitLab objects
+- Release visibility built from an external manifest and its corresponding GitLab objects
 - AI-assisted release summaries
 - Release readiness and blocker detection
 - Release note drafting
@@ -54,7 +54,7 @@ Possible later expansions:
 
 The first usable version should do a small number of things well:
 
-1. Ingest release-relevant GitLab data for an EdgeOps release scope defined by `edge-release`.
+1. Ingest release-relevant GitLab data for a release scope defined by an external manifest.
 2. Summarize open issues, merge requests, failed pipelines, and notable risks.
 3. Produce a release readiness report with clear reasons behind the score or status.
 4. Draft release notes from merged work items.
@@ -64,7 +64,7 @@ If the MVP cannot answer those five jobs reliably, the project is still in disco
 
 ## Core Capabilities
 
-- Parse or ingest release definitions from the `edge-release` manifest
+- Parse or ingest release definitions from a manifest-driven release source
 - GitLab API integration
 - Release readiness analysis
 - Blocker and risk identification
@@ -93,7 +93,7 @@ The technology stack is intentionally not locked yet. The system still needs to 
 
 Logical building blocks:
 
-- Manifest ingestion layer for `edge-release` release definitions
+- Manifest ingestion layer for external release definitions
 - Data ingestion layer for GitLab project, issue, merge request, and pipeline data
 - Analysis layer for readiness scoring, summarization, and risk detection
 - LLM orchestration layer for question answering and report generation
@@ -103,7 +103,7 @@ Logical building blocks:
 
 ## Suggested Build Order
 
-1. Define the EdgeOps release readiness model against the existing `edge-release` workflow.
+1. Define the release readiness model against the existing manifest-driven workflow.
 2. Parse `release.yaml` and normalize release scope, repos, stages, and validation targets.
 3. Build GitLab data ingestion for the objects referenced by that scope.
 4. Generate a deterministic release report without AI.
@@ -133,7 +133,7 @@ Current phase: problem definition and MVP scoping.
 
 ## Usage
 
-The CLI is read-only. It loads the EdgeOps release manifest, normalizes the release scope, and can optionally query GitLab for live release state.
+The CLI is read-only. It loads a release manifest, normalizes the release scope, and can optionally query GitLab for live release state.
 
 ### Setup
 
@@ -141,19 +141,19 @@ Copy `.env.example` into your local shell environment or a local `.env` file tha
 
 Required variables:
 
-- `EDGE_RELEASE_ROOT`: local path to the `edge-release` repository
+- `RELEASE_DEFINITION_ROOT`: local path to the release-definition repository
 - `GITLAB_TOKEN`: required only for `report-live`
 - `GITLAB_URL`: required only for `report-live`
 
 Optional variables:
 
-- `EDGE_RELEASE_MANIFEST`: explicit manifest path, overrides `EDGE_RELEASE_ROOT/release.yaml`
-- `EDGE_RELEASE_VARS_FILE`: explicit vars file path, overrides `EDGE_RELEASE_ROOT/release.vars.env`
+- `RELEASE_MANIFEST_PATH`: explicit manifest path, overrides `RELEASE_DEFINITION_ROOT/release.yaml`
+- `RELEASE_VARS_FILE`: explicit vars file path, overrides `RELEASE_DEFINITION_ROOT/release.vars.env`
 
 Example shell setup:
 
 ```bash
-export EDGE_RELEASE_ROOT=/path/to/edge-release
+export RELEASE_DEFINITION_ROOT=/path/to/release-definition-repo
 export GITLAB_URL=https://gitlab.example.com
 export GITLAB_TOKEN=replace-with-read-only-or-minimum-scope-token
 ```
@@ -162,7 +162,7 @@ You can also create a local `.env` or `.env.local` in this repository instead of
 
 ### Commands
 
-If `EDGE_RELEASE_ROOT` is set, you do not need to pass the manifest path explicitly.
+If `RELEASE_DEFINITION_ROOT` is set, you do not need to pass the manifest path explicitly.
 
 ```bash
 PYTHONPATH=src python3 -m gitlab_ai_release_engineer.cli inspect-manifest
@@ -176,8 +176,8 @@ You can still pass paths explicitly when needed:
 
 ```bash
 PYTHONPATH=src python3 -m gitlab_ai_release_engineer.cli report \
-  /path/to/edge-release/release.yaml \
-  --vars-file /path/to/edge-release/release.vars.env
+  /path/to/release-definition-repo/release.yaml \
+  --vars-file /path/to/release-definition-repo/release.vars.env
 ```
 
 ### What Each Command Does

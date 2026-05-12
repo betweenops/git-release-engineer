@@ -1,14 +1,14 @@
-# EdgeOps Integration Notes
+# Integration Notes
 
-This project is intended to support release operations for EdgeOps.
+This project is intended to support release operations built around an external manifest-driven release definition repository.
 
-The current release-definition repository is:
+The current release-definition repository is identified locally through:
 
-- `EDGE_RELEASE_ROOT`
+- `RELEASE_DEFINITION_ROOT`
 
 ## What Already Exists
 
-The `edge-release` repository already provides a useful definition layer:
+The external release-definition repository already provides a useful definition layer:
 
 - `release.yaml`: release manifest with repos, artifact sets, validation targets, and staged work items
 - `scripts/release_manifest.py`: manifest parser, planner, and GitLab object creator
@@ -29,17 +29,17 @@ That means this project does not need to invent release structure from scratch f
 
 ## Recommended v1 Role For This Project
 
-This repository should act as the analysis and intelligence layer on top of `edge-release`.
+This repository should act as the analysis and intelligence layer on top of that external release-definition source.
 
 Recommended responsibilities:
 
 - Load release scope from the manifest or generated GitLab objects
 - Inspect the state of the release epic, stage issues, and child tasks
-- Inspect repository health for included EdgeOps repos
+- Inspect repository health for included repos
 - Summarize blockers, risk, and readiness
 - Draft release notes and operator-facing status updates
 
-Responsibilities that should remain in `edge-release` for now:
+Responsibilities that should remain in the external release-definition repository for now:
 
 - Defining the release manifest schema
 - Creating release epics and issues
@@ -50,7 +50,7 @@ Responsibilities that should remain in `edge-release` for now:
 The current manifest already exposes useful readiness inputs:
 
 - Included repositories and release branches
-- Validation targets such as EOD and Microlab EdgeLine
+- Validation targets defined by the release process
 - Stage sequencing through `depends_on`
 - Acceptance criteria in work item descriptions
 - Artifact sets such as Iron Bank and ISO outputs
@@ -59,7 +59,7 @@ These are better initial inputs than generic milestone-based heuristics.
 
 ## Recommended Unit Of Analysis
 
-For EdgeOps, the first unit of analysis should be the release manifest plus the GitLab epic it creates.
+The first unit of analysis should be the release manifest plus the GitLab epic it creates.
 
 That is stronger than using a bare milestone because:
 
@@ -77,14 +77,14 @@ Build a CLI that:
 4. Produces a deterministic readiness report
 5. Optionally generates an LLM summary from that report
 
-## Initial Readiness Inputs For EdgeOps
+## Initial Readiness Inputs
 
 - Are all three top-level stages present?
 - Which stage is currently incomplete?
 - Are any child tasks still open?
 - Are any required release branches missing?
 - Are pipelines failing on included repos?
-- Are validation tasks incomplete for connected or airgap targets?
+- Are validation tasks incomplete for required targets?
 - Are release acceptance criteria still unchecked?
 
 ## Design Constraint
