@@ -22,26 +22,31 @@ INDEX_HTML = """<!doctype html>
   <title>Release Dashboard</title>
   <style>
     :root {
-      --ink: #111827;
-      --muted: #5b6470;
-      --line: #d8dde6;
-      --paper: #f4f1ea;
-      --card: #fffdf8;
-      --accent: #005f73;
-      --warn: #d97706;
-      --bad: #b42318;
-      --good: #1f7a1f;
-      --shadow: 0 16px 34px rgba(17, 24, 39, 0.08);
+      --ink: #e7fff6;
+      --text: #d5e7e2;
+      --muted: #94a7a3;
+      --line: rgba(146, 231, 196, 0.14);
+      --paper: #071013;
+      --card: rgba(12, 24, 29, 0.9);
+      --card-strong: rgba(14, 28, 34, 0.96);
+      --accent: #3fd497;
+      --accent-soft: #92e7c4;
+      --accent-deep: #163b30;
+      --warn: #f5c451;
+      --bad: #ff7f72;
+      --good: #3fd497;
+      --shadow: 0 20px 50px rgba(0, 0, 0, 0.32);
     }
 
     * { box-sizing: border-box; }
     body {
       margin: 0;
-      font-family: "IBM Plex Sans", "Segoe UI", sans-serif;
-      color: var(--ink);
+      font-family: "Space Grotesk", "Segoe UI", sans-serif;
+      color: var(--text);
       background:
-        radial-gradient(circle at top left, rgba(0, 95, 115, 0.14), transparent 28%),
-        linear-gradient(180deg, #f7f4ed 0%, #ebe7de 100%);
+        radial-gradient(circle at top left, rgba(63, 212, 151, 0.18), transparent 22%),
+        radial-gradient(circle at top right, rgba(24, 73, 58, 0.5), transparent 20%),
+        linear-gradient(180deg, #060d10 0%, #091215 44%, #0a1519 100%);
     }
 
     a { color: var(--accent); text-decoration: none; }
@@ -54,11 +59,14 @@ INDEX_HTML = """<!doctype html>
     }
 
     .hero {
-      background: linear-gradient(135deg, rgba(0, 95, 115, 0.96), rgba(10, 83, 99, 0.82));
-      color: white;
+      background:
+        linear-gradient(135deg, rgba(8, 18, 22, 0.94), rgba(9, 20, 25, 0.9)),
+        radial-gradient(circle at top left, rgba(63, 212, 151, 0.24), transparent 35%);
+      color: var(--ink);
       padding: 28px;
       border-radius: 24px;
       box-shadow: var(--shadow);
+      border: 1px solid rgba(146, 231, 196, 0.18);
     }
 
     .hero-top {
@@ -77,7 +85,7 @@ INDEX_HTML = """<!doctype html>
     }
 
     .subtle {
-      color: rgba(255, 255, 255, 0.82);
+      color: rgba(213, 231, 226, 0.78);
       margin-top: 10px;
       max-width: 56rem;
     }
@@ -98,30 +106,38 @@ INDEX_HTML = """<!doctype html>
       border-radius: 999px;
       padding: 11px 16px;
       cursor: pointer;
-      background: #f0f9ff;
-      color: #083344;
+      background: var(--accent);
+      color: #06110d;
       font-weight: 600;
+      transition: transform 0.18s ease, background 0.18s ease, box-shadow 0.18s ease;
+      box-shadow: 0 10px 24px rgba(63, 212, 151, 0.18);
+    }
+
+    button:hover {
+      transform: translateY(-1px);
+      background: var(--accent-soft);
     }
 
     button.secondary {
-      background: rgba(255, 255, 255, 0.12);
-      color: white;
-      outline: 1px solid rgba(255, 255, 255, 0.18);
+      background: rgba(255, 255, 255, 0.04);
+      color: var(--ink);
+      outline: 1px solid rgba(146, 231, 196, 0.18);
+      box-shadow: none;
     }
 
     .control-group {
       display: flex;
       gap: 8px;
       align-items: center;
-      background: rgba(255, 255, 255, 0.12);
+      background: rgba(255, 255, 255, 0.04);
       padding: 8px 10px;
       border-radius: 999px;
-      outline: 1px solid rgba(255, 255, 255, 0.18);
+      outline: 1px solid rgba(146, 231, 196, 0.18);
     }
 
     .control-label {
       font-size: 0.84rem;
-      color: rgba(255, 255, 255, 0.84);
+      color: rgba(213, 231, 226, 0.8);
       white-space: nowrap;
     }
 
@@ -149,11 +165,12 @@ INDEX_HTML = """<!doctype html>
     }
 
     .stat {
-      background: rgba(255, 255, 255, 0.11);
+      background: rgba(255, 255, 255, 0.04);
       border-radius: 18px;
       padding: 16px;
       min-height: 108px;
       backdrop-filter: blur(10px);
+      border: 1px solid rgba(146, 231, 196, 0.12);
     }
 
     .stat-label {
@@ -161,7 +178,7 @@ INDEX_HTML = """<!doctype html>
       font-size: 0.82rem;
       text-transform: uppercase;
       letter-spacing: 0.08em;
-      color: rgba(255, 255, 255, 0.76);
+      color: rgba(146, 231, 196, 0.72);
       margin-bottom: 8px;
     }
 
@@ -173,7 +190,7 @@ INDEX_HTML = """<!doctype html>
 
     .stat-note {
       margin-top: 8px;
-      color: rgba(255, 255, 255, 0.82);
+      color: rgba(213, 231, 226, 0.74);
       font-size: 0.92rem;
     }
 
@@ -186,13 +203,14 @@ INDEX_HTML = """<!doctype html>
       font-weight: 700;
       text-transform: uppercase;
       letter-spacing: 0.08em;
-      background: rgba(255, 255, 255, 0.16);
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(146, 231, 196, 0.18);
     }
 
-    .status-pill.green { color: #d6ffdd; }
-    .status-pill.yellow { color: #fff1b3; }
-    .status-pill.orange { color: #ffd8a8; }
-    .status-pill.red { color: #ffd0c9; }
+    .status-pill.green { color: var(--accent-soft); }
+    .status-pill.yellow { color: #ffe38f; }
+    .status-pill.orange { color: #ffd29a; }
+    .status-pill.red { color: #ffb5aa; }
 
     .main {
       margin-top: 22px;
@@ -204,7 +222,7 @@ INDEX_HTML = """<!doctype html>
 
     .panel {
       background: var(--card);
-      border: 1px solid rgba(17, 24, 39, 0.08);
+      border: 1px solid var(--line);
       border-radius: 22px;
       box-shadow: var(--shadow);
       overflow: hidden;
@@ -212,7 +230,8 @@ INDEX_HTML = """<!doctype html>
 
     .panel-head {
       padding: 18px 20px 10px;
-      border-bottom: 1px solid rgba(17, 24, 39, 0.07);
+      border-bottom: 1px solid var(--line);
+      background: linear-gradient(180deg, rgba(255, 255, 255, 0.02), transparent);
     }
 
     .panel-title {
@@ -242,15 +261,46 @@ INDEX_HTML = """<!doctype html>
     }
 
     .item {
-      border: 1px solid rgba(17, 24, 39, 0.08);
+      border: 1px solid var(--line);
       border-radius: 16px;
       padding: 14px;
-      background: #fff;
+      background: var(--card-strong);
+      transition: border-color 0.18s ease, transform 0.18s ease, box-shadow 0.18s ease;
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.02);
+    }
+
+    .item:hover {
+      transform: translateY(-1px);
+      border-color: rgba(146, 231, 196, 0.24);
+    }
+
+    .panel.stage-open {
+      border-left: 3px solid rgba(63, 212, 151, 0.42);
+    }
+
+    .panel.stage-missing {
+      border-left: 3px solid rgba(255, 127, 114, 0.62);
+      box-shadow: 0 0 0 1px rgba(255, 127, 114, 0.08);
+    }
+
+    .item.repo-failed {
+      border-color: rgba(255, 127, 114, 0.28);
+      box-shadow: 0 0 0 1px rgba(255, 127, 114, 0.08);
+    }
+
+    .item.repo-missing {
+      border-color: rgba(245, 196, 81, 0.22);
+      box-shadow: 0 0 0 1px rgba(245, 196, 81, 0.06);
+    }
+
+    .item.repo-healthy {
+      border-color: rgba(63, 212, 151, 0.2);
     }
 
     .item-title {
       font-weight: 700;
       margin: 0 0 6px;
+      color: var(--ink);
     }
 
     .meta {
@@ -259,6 +309,19 @@ INDEX_HTML = """<!doctype html>
       display: flex;
       gap: 12px;
       flex-wrap: wrap;
+    }
+
+    .repo-kicker {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 8px;
+      font-family: "Space Mono", "SFMono-Regular", monospace;
+      font-size: 0.77rem;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      color: rgba(146, 231, 196, 0.68);
     }
 
     .badge-row {
@@ -273,16 +336,19 @@ INDEX_HTML = """<!doctype html>
       padding: 5px 9px;
       font-size: 0.78rem;
       font-weight: 700;
-      background: #eef2f6;
-      color: #344054;
+      background: rgba(255, 255, 255, 0.06);
+      color: #dceae5;
+      border: 1px solid rgba(255, 255, 255, 0.05);
     }
 
-    .badge.failed { background: #fee4e2; color: var(--bad); }
-    .badge.missing { background: #fff4cc; color: #9a6700; }
-    .badge.success { background: #dcfae6; color: var(--good); }
-    .badge.opened { background: #e0f2fe; color: #075985; }
-    .badge.closed { background: #dcfae6; color: var(--good); }
-    .badge.orange { background: #ffedd5; color: var(--warn); }
+    .badge.failed { background: rgba(255, 127, 114, 0.14); color: var(--bad); }
+    .badge.missing { background: rgba(245, 196, 81, 0.14); color: var(--warn); }
+    .badge.success { background: rgba(63, 212, 151, 0.14); color: var(--good); }
+    .badge.opened { background: rgba(63, 212, 151, 0.12); color: var(--accent-soft); }
+    .badge.closed { background: rgba(63, 212, 151, 0.14); color: var(--good); }
+    .badge.orange { background: rgba(245, 196, 81, 0.12); color: var(--warn); }
+    .badge.red { background: rgba(255, 127, 114, 0.14); color: var(--bad); }
+    .badge.present { background: rgba(63, 212, 151, 0.1); color: var(--accent-soft); }
 
     .toolbar {
       display: flex;
@@ -295,22 +361,23 @@ INDEX_HTML = """<!doctype html>
       border: 1px solid var(--line);
       border-radius: 12px;
       padding: 10px 12px;
-      background: white;
+      background: rgba(255, 255, 255, 0.03);
+      color: var(--text);
       min-width: 180px;
     }
 
     .empty, .error {
       padding: 14px;
       border-radius: 14px;
-      background: #fff;
+      background: rgba(255, 255, 255, 0.02);
       border: 1px dashed var(--line);
       color: var(--muted);
     }
 
     .error {
-      background: #fff1f1;
-      border-color: #f3c3c2;
-      color: #7a271a;
+      background: rgba(255, 127, 114, 0.08);
+      border-color: rgba(255, 127, 114, 0.28);
+      color: #ffd2cb;
     }
 
     .sidebar {
@@ -330,6 +397,24 @@ INDEX_HTML = """<!doctype html>
       color: var(--muted);
       font-size: 0.92rem;
     }
+
+    .signal-bar {
+      display: flex;
+      gap: 6px;
+      margin-top: 10px;
+    }
+
+    .signal {
+      height: 6px;
+      flex: 1 1 0;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.06);
+      overflow: hidden;
+    }
+
+    .signal.fill-good { background: linear-gradient(90deg, rgba(63, 212, 151, 0.35), rgba(146, 231, 196, 0.72)); }
+    .signal.fill-warn { background: linear-gradient(90deg, rgba(245, 196, 81, 0.28), rgba(245, 196, 81, 0.7)); }
+    .signal.fill-bad { background: linear-gradient(90deg, rgba(255, 127, 114, 0.28), rgba(255, 127, 114, 0.7)); }
 
     @media (max-width: 980px) {
       .main {
@@ -498,6 +583,8 @@ INDEX_HTML = """<!doctype html>
     function badgeClass(value) {
       if (value === "failed") return "failed";
       if (value === "missing") return "missing";
+      if (value === "red") return "red";
+      if (value === "present") return "present";
       if (value === "success" || value === "passed" || value === "closed") return "success";
       if (value === "opened") return "opened";
       if (value === "orange") return "orange";
@@ -522,6 +609,7 @@ INDEX_HTML = """<!doctype html>
         const issue = stage.issue || {};
         const children = stage.open_children || [];
         const issueState = issue.found === false ? "missing" : (issue.state || "unknown");
+        const stageClass = issueState === "missing" ? "stage-missing" : (issueState === "opened" ? "stage-open" : "");
         const issueUrl = issue.web_url ? `<a href="${escapeHtml(issue.web_url)}" target="_blank" rel="noreferrer">Open issue</a>` : "";
         const childMarkup = children.length
           ? children.map(child => {
@@ -549,7 +637,7 @@ INDEX_HTML = """<!doctype html>
             }).join("")
           : `<div class="empty">No open child work.</div>`;
         return `
-          <div class="panel">
+          <div class="panel ${stageClass}">
             <div class="panel-head">
               <h3 class="panel-title">${escapeHtml(stage.title)}</h3>
               <div class="panel-sub">${escapeHtml(stage.project || "")}</div>
@@ -597,11 +685,23 @@ INDEX_HTML = """<!doctype html>
           ? (repo.pipeline.status || "unknown")
           : "missing";
         const branchStatus = repo.branch_found ? "present" : "missing";
+        const repoStateClass =
+          pipelineStatus === "failed" ? "repo-failed" :
+          pipelineStatus === "missing" ? "repo-missing" :
+          ["success", "passed"].includes(pipelineStatus) ? "repo-healthy" : "";
         const pipelineUrl = repo.pipeline && repo.pipeline.web_url
           ? `<a href="${escapeHtml(repo.pipeline.web_url)}" target="_blank" rel="noreferrer">Open pipeline</a>`
           : "";
+        const signalClass =
+          pipelineStatus === "failed" ? "fill-bad" :
+          pipelineStatus === "missing" ? "fill-warn" :
+          ["success", "passed"].includes(pipelineStatus) ? "fill-good" : "";
         return `
-          <div class="item">
+          <div class="item ${repoStateClass}">
+            <div class="repo-kicker">
+              <span>${escapeHtml(repo.key)}</span>
+              <span>${escapeHtml(pipelineStatus)}</span>
+            </div>
             <p class="item-title">${escapeHtml(repo.name)}</p>
             <div class="meta">
               <span>${escapeHtml(repo.project)}</span>
@@ -610,6 +710,9 @@ INDEX_HTML = """<!doctype html>
             <div class="badge-row">
               <span class="badge ${badgeClass(branchStatus)}">${escapeHtml(branchStatus)} branch</span>
               <span class="badge ${badgeClass(pipelineStatus)}">${escapeHtml(pipelineStatus)} pipeline</span>
+            </div>
+            <div class="signal-bar">
+              <div class="signal ${signalClass}"></div>
             </div>
             <div class="footer-note">
               <a href="${escapeHtml(repo.url)}" target="_blank" rel="noreferrer">Repository</a>
