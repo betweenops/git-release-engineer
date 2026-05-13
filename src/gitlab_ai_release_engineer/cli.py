@@ -3,6 +3,7 @@ from __future__ import annotations
 import argparse
 import json
 import os
+import urllib.parse
 from dataclasses import asdict
 from pathlib import Path
 
@@ -80,6 +81,21 @@ def resolve_manifest_path(path: Path | None) -> Path:
     )
 
 
+def validate_gitlab_url(value: str) -> str:
+    parsed = urllib.parse.urlparse(value)
+    if not parsed.scheme or not parsed.netloc:
+        raise ManifestError(
+            "GITLAB_URL must be a full GitLab base URL such as "
+            "'https://gitlab.example.com'."
+        )
+    if parsed.path not in {"", "/"}:
+        raise ManifestError(
+            "GITLAB_URL must be the GitLab server base URL only, not a group or project page. "
+            f"Example: '{parsed.scheme}://{parsed.netloc}'."
+        )
+    return f"{parsed.scheme}://{parsed.netloc}"
+
+
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(
         prog="gitlab-ai-release-engineer",
@@ -121,6 +137,24 @@ def build_parser() -> argparse.ArgumentParser:
         action="store_true",
         help="Emit the computed report as JSON.",
     )
+
+    dashboard = subparsers.add_parser(
+        "dashboard",
+        help="Run a local interactive dashboard for release state.",
+    )
+    dashboard.add_argument("manifest", type=Path, nargs="?")
+    dashboard.add_argument("--vars-file", type=Path, default=default_vars_file_path())
+    dashboard.add_argument(
+        "--gitlab-url",
+        default=os.environ.get("GITLAB_URL", ""),
+    )
+    dashboard.add_argument(
+        "--token-env",
+        default="GITLAB_TOKEN",
+        help="Environment variable containing the GitLab private token.",
+    )
+    dashboard.add_argument("--host", default="127.0.0.1")
+    dashboard.add_argument("--port", type=int, default=8000)
 
     return parser
 
@@ -181,6 +215,7 @@ def command_report_live(args: argparse.Namespace) -> int:
         raise ManifestError(
             "Set GITLAB_URL or pass --gitlab-url before using report-live."
         )
+    gitlab_url = validate_gitlab_url(gitlab_url)
     if not token:
         raise ManifestError(
             f"Set {args.token_env} before using report-live against private GitLab data."
@@ -195,6 +230,24 @@ def command_report_live(args: argparse.Namespace) -> int:
         return 0
 
     print(render_live_report(scope.title or scope.version, state, report))
+    return 0
+
+
+def command_dashboard(args: argparse.Namespace) -> int:
+    from .dashboard import serve_dashboard
+
+    manifest_path = resolve_manifest_path(args.manifest)
+    gitlab_url = (args.gitlab_url or "").strip() or None
+    if gitlab_url:
+        gitlab_url = validate_gitlab_url(gitlab_url)
+    serve_dashboard(
+        host=args.host,
+        port=args.port,
+        manifest_path=manifest_path,
+        vars_file=args.vars_file,
+        gitlab_url=gitlab_url,
+        token_env=args.token_env,
+    )
     return 0
 
 
@@ -397,6 +450,8 @@ def main() -> int:
             return command_report(args)
         if args.command == "report-live":
             return command_report_live(args)
+        if args.command == "dashboard":
+            return command_dashboard(args)
     except ManifestError as exc:
         parser.exit(2, f"error: {exc}\n")
     parser.exit(2, f"error: unsupported command {args.command!r}\n")
