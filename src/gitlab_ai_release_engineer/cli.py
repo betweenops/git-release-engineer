@@ -3,8 +3,10 @@ from __future__ import annotations
 import argparse
 import json
 import os
+import sys
 import urllib.parse
 from dataclasses import asdict
+from datetime import datetime, timezone
 from pathlib import Path
 
 from .gitlab import GitLabClient
@@ -135,7 +137,19 @@ def build_parser() -> argparse.ArgumentParser:
     report_live.add_argument(
         "--json",
         action="store_true",
-        help="Emit the computed report as JSON.",
+        help="Emit the computed report as JSON. Equivalent to --format json.",
+    )
+    report_live.add_argument(
+        "--format",
+        choices=["text", "json", "html", "md"],
+        default="text",
+        help="Output format. 'html' and 'md' produce static snapshots suitable for sharing.",
+    )
+    report_live.add_argument(
+        "--output",
+        type=Path,
+        default=None,
+        help="Write the report to this file instead of stdout.",
     )
 
     dashboard = subparsers.add_parser(
@@ -223,13 +237,35 @@ def command_report_live(args: argparse.Namespace) -> int:
     client = GitLabClient(gitlab_url, token=token)
     state = load_release_live_state(client, scope)
     report = build_live_report(state)
+    release_name = scope.title or scope.version
 
-    if args.json:
-        payload = build_live_payload(scope.title or scope.version, state, report)
-        print(json.dumps(payload, indent=2))
+    output_format = "json" if args.json else args.format
+
+    if output_format == "text":
+        rendered = render_live_report(release_name, state, report)
+    elif output_format == "json":
+        payload = build_live_payload(release_name, state, report)
+        rendered = json.dumps(payload, indent=2)
+    else:
+        from . import render as render_mod
+        payload = build_live_payload(release_name, state, report)
+        generated_at = datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M UTC")
+        if output_format == "html":
+            rendered = render_mod.render_html(payload, generated_at)
+        else:
+            rendered = render_mod.render_markdown(payload, generated_at)
+
+    if args.output is not None:
+        args.output.write_text(rendered, encoding="utf-8")
+        print(f"Wrote {output_format} report to {args.output}", file=sys.stderr)
         return 0
 
-    print(render_live_report(scope.title or scope.version, state, report))
+    if output_format == "html" and sys.stdout.isatty():
+        print(
+            "HTML written to stdout. Redirect with `> release.html` or use --output release.html.",
+            file=sys.stderr,
+        )
+    print(rendered)
     return 0
 
 

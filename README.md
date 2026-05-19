@@ -81,6 +81,15 @@ PYTHONPATH=src python3 -m gitlab_ai_release_engineer.cli report \
 - `report-live`
   Generates a live readiness report using GitLab epics, work items, release branches, and latest pipelines.
 
+  Supports multiple output formats via `--format {text,json,html,md}` and an optional `--output PATH`. The `html` and `md` formats produce static, self-contained snapshots suitable for emailing, posting to a wiki, or attaching to a release epic — no server required.
+
+  ```bash
+  PYTHONPATH=src python3 -m gitlab_ai_release_engineer.cli report-live --format html --output release.html
+  PYTHONPATH=src python3 -m gitlab_ai_release_engineer.cli report-live --format md   --output release.md
+  ```
+
+  `--json` is preserved as a shortcut for `--format json`.
+
 - `dashboard`
   Starts a local dashboard server with both manifest and live GitLab views.
 
